@@ -45,7 +45,7 @@ zip : cls doc
 	main.tex ustcextra.sty bib chapters figures .latexmkrc Makefile}
 	rm $(NAME)
 
-wordcount:
+wc:
 	@perl texcount.pl main.tex -inc          | awk '/total/ {getline; print "词数    :",$$4}' 
 	@perl texcount.pl main.tex -inc -char    | awk '/total/ {getline; print "字符数  :",$$4}' 
 	@perl texcount.pl main.tex -inc -ch-only | awk '/total/ {getline; print "中文字数:",$$4}' 

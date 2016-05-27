@@ -1,1 +1,18 @@
-\chapter{实验过程}
+\chapter{结构设计}
+\section{数据选择}
+我们选择了由grouplens提供了MovieLens，数据主要主要划分四个部分。
+\begin{itemize}
+    \item 100k，这个部分主要是5分制，导致推荐结果较差。
+    \item 1M， 5分制。
+    \item 10M， 有半分了
+    \item 20M, 有半分+1
+\end{itemize}
+
+\subsection{数据预处理部分}
+groupLens组织上上个世纪90年代开始积累数据，由于中间经过4次比较大的变动，导致提供的数据并不完全按照一个标准收集，我们在实验中忽略这个问题，并在这个问题显示出影响的时候，予以指出。
+
+标准提供的数据包含timestamp，由于我们不需要timestamp，在预处理过程将其去除。预处理过程我们可以在单机上完成，并不需要分布式。
+
+\section{Spark架构搭建}
+前面提及到，spark框架由master node和slave node组成，在我们搭建的spark集群中，使用了一台master node和两台slave node进行搭建。如下图
+% todo 加一个我们的spark部署的图
