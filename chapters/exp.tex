@@ -1,5 +1,7 @@
 \chapter{结构设计}
+% todo 详细介绍数据选择问题
 \section{数据选择}
+我们所采用的数据\cite{Harper:2016bm}
 我们选择了由grouplens提供了MovieLens，数据主要主要划分四个部分。
 \begin{itemize}
     \item 100k，这个部分主要是5分制，导致推荐结果较差。
@@ -16,3 +18,94 @@ groupLens组织上上个世纪90年代开始积累数据，由于中间经过4�
 \section{Spark架构搭建}
 前面提及到，spark框架由master node和slave node组成，在我们搭建的spark集群中，使用了一台master node和两台slave node进行搭建。如下图
 % todo 加一个我们的spark部署的图
+% todo 算法复杂度分析
+\subsection{并行算法设计}
+    \begin{algorithm}
+    % todo 把此处翻译成中文，并改成不加sample的版本，并在另外一节加入sample版本的算法
+        \caption{相似性的并行计算}
+        \begin{algorithmic}[1] %每行显示行号
+            \Require \\
+            \begin{itemize}
+                \item $M_{u, *}$, an RDD representing the user-item ratings matrix, keyed on the user index. Each $M_{u,*}$ element represents a rating and is either in $\mathbb{N}$ or empty.
+                \item $SIm(((u, v), Seq(V)))$, a user-defined function which computes the cosine similarity between two users $u$ and $v$. $V$ is a list of item-rating pairs for which $u$ and $v$ have both interacted with %todo (2.1)?
+                \item $SampleInteractions(K, Seq(V), n)$ a user-defined function which applies selective down sampling to $Seq(V)$, a sequence of items. If the length of Seq(V) exceeds n, the resulting value is a sample of n items from Seq(V).
+                \item KeyOnFirstItem(((u, v), V), a user-defined function which converts the from (u, v) to u and appends v to the front of the value V resulting in a (u, V) tuple. This is used to key pairwise objects on a single item.
+                \item NearestNeighbors(K, Seq(V), k), a user-defined function that takes in the list of neighbor items to K, and outputs the k items with the highest similarity to K.
+                \item Map(f, (K, V)), Filter(f, (K, V)), and GroupByKey((K, V)) as defined previously, where (K, V) denotes an RDD object and f is a user-defined function.
+            \end{itemize}
+            \Ensure $S_{u,v}$, the sparse user similarity matrix. Each $S_{u, v}$ element is either in [0, 1] or empty.
+%            \Function {MergerSort}{$Array, left, right$}
+%                \State $result \gets 0$
+%                \If {$left < right$}
+%                    \State $middle \gets (left + right) / 2$
+%                    \State $result \gets result +$ \Call{MergerSort}{$Array, left, middle$}
+%                    \State $result \gets result +$ \Call{MergerSort}{$Array, middle, right$}
+%                    \State $result \gets result +$ \Call{Merger}{$Array,left,middle,right$}
+%                \EndIf
+%                \State \Return{$result$}
+%            \EndFunction
+%            \State
+%            \Function{Merger}{$Array, left, middle, right$}
+%                \State $i\gets left$
+%                \State $j\gets middle$
+%                \State $k\gets 0$
+%                \State $result \gets 0$
+%                \While{$i<middle$ \textbf{and} $j<right$}
+%                    \If{$Array[i]<Array[j]$}
+%                        \State $B[k++]\gets Array[i++]$
+%                    \Else
+%                        \State $B[k++] \gets Array[j++]$
+%                        \State $result \gets result + (middle - i)$
+%                    \EndIf
+%                \EndWhile
+%                \While{$i<middle$}
+%                    \State $B[k++] \gets Array[i++]$
+%                \EndWhile
+%                \While{$j<right$}
+%                    \State $B[k++] \gets Array[j++]$
+%                \EndWhile
+%                \For{$i = 0 \to k-1$}
+%                    \State $Array[left + i] \gets B[i]$
+%                \EndFor
+%                \State \Return{$result$}
+%            \EndFunction
+            
+            \Function{PAIRWISEITEMS}{M, N}
+            \State itemRatingPairs $\leftarrow$ Map(FindItemPairs(), Map(SampleInteractions(n), $M_{u, *}$))
+            \State pairwiseItems $\leftarrow$ GroupByKey(itemRatingPairs)
+            \State \textbf{emit} pairwiseItems
+            \EndFunction
+            
+            \Function{ITEMSIMILARITY}{pairwiseItems, k}
+                \State itemSims $\leftarrow$ Map(KeyOnFirstItem(), Map(Sim(), pairwiseItems)
+                \State nearestItems $\leftarrow$ map(NearestNeighbors(k), GroupByKey(itemSims))
+                \State emit nearestItems
+            \EndFunction
+        \end{algorithmic}
+    \end{algorithm}
+    
+    \begin{algorithm}
+    \caption{Parallel Top N Recommendations Computation}
+    \begin{algorithmic}[1]
+        \Require \\
+        \begin{itemize}
+            \item $M_{u, *}$ an RDD representing the user-item raitngs matrix, keyed on the user index. Each $M_{u, *}$ element represents a rating and is eigher in $\mathbb{N}$ or empty.
+            \item nearestItems, the top k similar items for each item in M, as described in Algorithm2. This variable is initalized as a broadcast variable.
+            \item n, the number of item recommedations to return.
+            \item WeightedSums(K, V, NearestItems, n), a user-defined function that computes the item recommendations for each user K using the weighted sums approach (2.2)
+            \item Map(f, (K, V)) and GroupByKey((K, V)) as defined previously, where (K, V) denotes an RDD object and f is a user-defined funciton.
+        \end{itemize}
+        \Ensure \\itemRecs, the top n item recomendations for the active user u.
+        \Function{GROUPITEMRATINGS}{M}
+            \State UserItemRatings $\leftarrow$ GroupByKey($M_{u, *}$)
+            \State \textbf{emit} UserItemRatings
+        \EndFunction
+        
+        \Function{TOPNRECOMMENDATIONS}{UserItemRatings, NearestItems, n}
+             \State ItemRecs $\leftarrow$ Map(WeightedSums(NearestItems, n), UserItemRatings)
+            \State \textbf{emit} ItemRecs
+        \EndFunction
+    \end{algorithmic}
+    
+    \end{algorithm}
+加入了sample之后可以抵抗恶意用户的攻击。
