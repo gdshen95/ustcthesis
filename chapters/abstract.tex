@@ -14,15 +14,15 @@
 % 第一段先介绍大数据背景
 %    现代互联网的高速发展产生了大量富有价值的信息，如何从海量的数据中挖掘中对用户有用或者用户感兴趣的信息是一个具有重大意义的课题。当数据的总量越来越大，数据的产生速度越来越快，大数据平台的研究与发展就是在这一背景下兴起。Hadoop的诞生使人们关注MapReduce这一计算模式的研究，而Spark通过引入RDD数据模型及基于内存的运算方式，使其能够很好地适应大数据的数据挖掘这一场景，并且在迭代计算方面优于Hadoop，迅速成为了广大企业、学者的研究重点。在机器学习应用的领域，推荐系统是一种从海量用户行为中挖掘出有用信息并提供给用户的应用，推荐系统中推荐算法的实现是数据挖掘与机器学习的重要部分。基于传统计算机的推荐算法实现过程需要耗费大量的时间，不能满足当今的商业需求，而结合分布式计算平台的并行化能够有效地解决这一问题。在推荐算法实现过程中经常存在多次迭代计算，Spark的出现这个迎合了推荐算法并行化这一需求。数据是重要的资产。
     
-现代互联网的高速发展促进了信息的产生与交流，目前人们面临着数据的总量越来越大，数据的产生速度越来越快的问题。与此同时，人们认识到数据作为无形的资产，在当今世界及其重要，做好数据的收集与处理，对于企业的发展而言意义重大。在这样的背景下，大数据平台的研究成为了当代的热点研究项目。随着Google提出MapReduce的计算模式，Hadoop对于MapReduce的开源实现之后，MapReduce并行计算模式受到了广泛的采用，而Spark平台的诞生，通过引入RDD和DataFrame数据模型以及基于内存的计算方式，在计算速度上，Spark要明显在数量级上优于Hadoop平台的MapReduce，更加适应大数据背景下的多迭代计算场景。因此，Spark平台自提出之后，一直受到工业界和学术界的关注，成为了研究重点。
+现代互联网的高速发展促进了信息的产生与交流，目前人们面临着数据的总量越来越大，数据的产生速度越来越快的问题。与此同时，人们认识到数据作为无形的资产，在当今世界及其重要，做好数据的收集与处理，对于企业的发展而言意义重大。在这样的背景下，大数据平台的研究成为了当代的热点研究项目。随着Google提出MapReduce计算模式，Hadoop项目对于MapReduce模式进行开源实现之后，MapReduce并行计算模式受到了广泛的采用，而Spark平台的诞生，通过引入RDD和DataFrame数据模型以及基于内存的计算方式，在计算速度上，要明显在数量级上优于Hadoop平台的MapReduce，因而更加适应大数据背景下的多迭代计算场景。因此，Spark平台自提出之后，一直受到工业界和学术界的关注，成为了研究重点。
     
     % 第二段介绍推荐系统
-    随着信息的加快流通，经济全球化的发展，当前的人们在消费商品时所面临的商品种类达到了前所未有的数量。随着电商的兴起，网购行为的不断普及，电商平台对于商品的推荐极大地影响了店铺的收益和买家的最终购买行为；随着音乐电影等多媒体资源数字化的发展，人们在进行文化消费时也会面临纷杂的选项。当面临用户数的不断增多和商品种类的不断增加过程中，如何通过给用户推荐喜欢程度较高，有更大消费可能的商品，成为了许多企业发展所面临的一大难题，在这一背景下，推动了人们对于推荐系统的研究。
+    随着信息的加快流通，经济全球化的发展，当前的人们在消费商品时所面临的商品种类达到了前所未有的数量。随着电商的兴起，网购行为的不断普及，电商平台对于商品的推荐极大地影响了商家的收益和买家的最终购买行为；随着音乐电影等多媒体资源数字化的发展，人们在进行文化消费时也会面临纷杂的选项。当面临用户数的不断增多和商品种类的不断增加过程中，如何通过给用户推荐喜欢程度较高，有更大消费可能的商品，成为了许多企业发展所面临的一大难题，在这一背景下，推动了人们对于推荐系统的研究。
     
 %    随着现代工业的发展，物质生产力的提高，以及娱乐业的不断发展，人们可以消费的产品越来越多。越来越多不同种类的商品被制造出来不同款式的衣服，各种风格的音乐，不同品味的电影。在互联网的发展下，电商、音乐平台，电影电视剧平台，当面临用户数的不断增多和商品种类的不断增加过程中，如果通过给用户推荐喜欢的商品从而达到用户对于平台的粘性最大化以及自身利益的最大化问题，成为了许多企业的一大难题，并且当商品的增加速度过快时，人工很难有效对商品加以标签分类。
         
  %第三段介绍本文的主要工作
- 本文主要研究在推荐系统中协同过滤算法的可扩展性问题。协同过滤算法不利用商品的自身属性，仅仅需要用户对于商品的评分就可以对用户推荐其可能喜欢的商品。本文主要对协同过滤算法大类下的两种不同算法在Spark平台上进行了研究分析，实现了基于交替最小二乘法的隐式因子分解模型推荐算法，和基于领域关系中的用户-用户相似关系与物品-物品之间的相似关系的推荐算法，同时对交替最小二乘法和邻域关系的推荐算法的并行性进行了分析，对基于领域关系的推荐算法中加入了采样的操作，极大地降低了推荐系统中的计算开销。
+ 本文主要研究在推荐系统中协同过滤算法的可扩展性问题。协同过滤算法不利用商品的自身属性，仅仅需要用户对于商品的评分就可以对用户推荐其可能喜欢的商品。本文主要对协同过滤算法大类下的两种不同算法在Spark平台上进行了研究分析，实现了基于交替最小二乘法的隐式因子模型推荐算法，和基于邻域关系中的用户-用户相似关系与物品-物品之间的相似关系的推荐算法，同时对交替最小二乘法和邻域关系的推荐算法的并行性进行了分析，对基于邻域关系的推荐算法中加入了采样的操作，极大地降低了推荐系统中的计算开销。
     \keywords{协同过滤\zhspace{}交替最小二乘法\zhspace{}推荐系统\zhspace{}分布式系统\zhspace{}并行计算}
 \end{abstract}
 
@@ -39,10 +39,10 @@
 %\enkeywords{University of Science and Technology of China (USTC), Thesis, Universal \LaTeX{} Template, Bachelor, Master, PhD}
 %\end{enabstract}
 \begin{enabstract}
-The rapid development of modern Internet promotes the generation and exchange of information. People are currently facing problem which is the data amount is increasing fast and the speed of data generation is becoming higher.  At the same time, it is recognized that data is also another form of asset which is very important in today's world. It makes sense for enterprise to do the collection and processing of data for development. In this background, big data platform has become a hotspot of contemporary research projects. With Google proposed MapReduce computing pattern and Hadoop made the open source implementation of MapReduce for later, this pattern has been widely adopted. The birth of Spark platform, through the introduction of RDD and DataFrame data structure and calculation based on memory, which win Hadoop in computing speed, becomes a research focus of the industry and academia.
+The rapid development of modern Internet promotes the generation and exchange of information. People are currently facing problem which is the data amount is increasing fast and the speed of data generation is becoming higher.  At the same time, it is recognized that data is also another form of asset which is very important to today's world. It makes sense for enterprise to do the collection and processing of data for development. Under this background, big data platform has become a hotspot of contemporary research projects. With Google proposed MapReduce computing pattern and Hadoop made the open source implementation of MapReduce for later, this pattern has been widely adopted. The birth of Spark platform, through the introduction of RDD and DataFrame data structure and calculation based on memory, which win Hadoop in computing speed, becomes a research focus of the industry and academia.
     
-Now people are facing an unprecedented number of consumer goods. It is very hard for them to choose. With the growing popularity of electronic business of online shopping, the recommendation from electronic business platform greatly affect the final income of shop and the purchasing behavior of buyers. When faced with the growing number of users and types of goods, how to recommend goods to users has become a major problem in many companies. In this context the systematic research on recommendation systems has been made.
+Now people are facing an unprecedented number of consumer goods and it is very hard for them to choose. With the growing popularity of electronic business of online shopping, the recommendation from electronic business platform greatly affect the final income of shop and the purchasing behavior of buyers. When faced with the growing number of users and types of goods, how to recommend goods to users has become a major problem in many companies. In this context the systematic research on recommendation systems has been made.
 
     In this paper, we mainly focus on the scale up problem of collaborative filtering in recommendation systems. Collaborative filtering is algorithm which only leverage user-item ratings without any information from the item and user itself. We have done some research on the two main kinds of algorithm, that is latent factor model and neighborhood-like algorithm, and their implementation on Spark platform. We also have done the analysis of the parallel implementation of ALS algorithm, and added the sample-down method to the neighborhood-like algorithm to speed up our algorithm.
-    \keywords{Collaborative filtering, ALS, Recommender Systems, Distributed systems, Parallel computing}
+    \keywords{Collaborative Filtering, ALS, Recommender Systems, Distributed Systems, Parallel Computing}
 \end{enabstract}
