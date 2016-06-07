@@ -45,7 +45,7 @@ Driver使用了2g内存，使用了两个work节点，每个work节点使用2个
             \\
             \Function{ITEMSIMILARITY}{pairwiseItems, k}
                 \State itemSims $\leftarrow$ Map(KeyOnFirstItem(), Map(Sim(), pairwiseItems)
-                \State nearestItems $\leftarrow$ map(NearestNeighbors(k), GroupByKey(itemSims))
+                \State nearestItems $\leftarrow$ Map(NearestNeighbors(k), GroupByKey(itemSims))
                 \State \textbf{emit} nearestItems
             \EndFunction
         \end{algorithmic}
