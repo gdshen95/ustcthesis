@@ -21,7 +21,7 @@ Spark有如下四部分主要组成：
 \begin{itemize}
     \item \textbf{Spark SQL}。Spark SQL使得你可以通过Java、Python、R、Scala语言在Spark程序中使用SQL或者熟悉的DataFrame API来查询结构化数据。并且DataFrames和SQL提供了一种通用的方式来访问多种不同的数据源，包括Hive, Avro, Parquet, ORC, JSON和JDBC。我们甚至可以使用对数据使用连接（join)操作。Spark SQL完全兼容Hive的操作，我们可以对于已有的数据运行未经修改的Hive查询。通过JDBC和ODBC，我们可以使用标准的数据库连接方式。
     \item \textbf{Spark Streaming}。Spark Streaming提供了Apache Spark语言级整合的API来进行流处理，我们可以像编写批处理任务的代码一样来编写流任务。支持Java、Scala、Python。容错性较高，开箱支持从lost work和operator state中恢复。Spark中不同部分整合性较好，我们可以把流处理和批处理以及交互式请求方便地结合起来。
-    \item \textbf{Spark MLlib}。Spark中方便使用的机器学习库，MLlib可以和Python中的Numpy库进行交互，使用任何Hadoop数据源(HDFS, HBase或者本地文件)，这使得MLlib很容易插入Hadoop workflow中。在性能上，Spark中的高质量算法，比MapReduce快100倍。Spakr非常方便部署，我们可以在Hadoop 2集群上不预装任何东西的情况下运行Spark和MLlib。
+    \item \textbf{Spark MLlib}。Spark中方便使用的机器学习库，MLlib可以和Python中的Numpy库进行交互，使用任何Hadoop数据源(HDFS, HBase或者本地文件)，这使得MLlib很容易插入Hadoop workflow中。在性能上，Spark中的高质量算法，比MapReduce快100倍。Spark非常方便部署，我们可以在Hadoop 2集群上不预装任何东西的情况下运行Spark和MLlib。
     \item \textbf{GraphX}。灵活性非常好，我们可以在collections和graphs之间无缝整合，GraphX在单个系统中统一了ETL，解释分析，迭代图计算。我们可以把同一份数据视为graphs或者collections，采用Spark中transform或者join graphs操作。在性能上，与其他专门的图处理系统相比Spark是最快的。在算法数量上，Spark拥有相当多的图算法实现，包括PageRand, Connected components, label propagations, SVD++, Strongly connected components, Triangle count等。
 \end{itemize}
 
@@ -43,17 +43,17 @@ Spark中最基本的数据类型是弹性分布式数据集RDD( Resilient Distri
 \caption{Spark中的transformation操作}\label{spark:transform}
 \begin{tabular}{|p{5cm}|p{10cm}|}
 \hline
-map(func)	& 对每个元素使用func操作之后返回新的RDD\\ \hline
-filter(func)	& 过滤func操作结果为假的元素，返回新的RDD \\ \hline
-flatMap(func)	& 与map相似，但是每个输入元素映射到0或多个输出元素 \\   \hline
-sample(withReplacement, fraction, seed) &	使用给定的随机种子，对输入的数据进行给定比例的采样 \\ \hline
-union(otherDataset)	& 返回输入数据与参数联合的新RDD \\   \hline
-intersection(otherDataset) &	返回数据数据与参数交集的新RDD\\ \hline
-distinct([numTasks]))	& 返回输入数据中不同元素的新RDD \\ \hline
+map(func)	& 对每个元素使用func操作之后返回新的RDD。\\ \hline
+filter(func)	& 过滤func操作结果为假的元素，返回新的RDD。 \\ \hline
+flatMap(func)	& 与map相似，但是每个输入元素映射到0或多个输出元素。 \\   \hline
+sample(withReplacement, fraction, seed) &	使用给定的随机种子，对输入的数据进行给定比例的采样。 \\ \hline
+union(otherDataset)	& 返回输入数据与参数联合的新RDD。 \\   \hline
+intersection(otherDataset) &	返回数据数据与参数交集的新RDD。\\ \hline
+distinct([numTasks]))	& 返回输入数据中不同元素的新RDD。\\ \hline
 groupByKey([numTasks])	& 对数据集(K ,V)对进行操作，返回(K, Iterable<V>)对。\\ \hline
 reduceByKey(func, [numTasks]) & 当在(K, V)对上调用的时候，返回(K, V)对数据集。值V必须满足类型(V, V)=>V，然后用func函数进行聚合得到。\\ \hline
 sortByKey([ascending], [numTasks])	 & 当K是可排序的，在(K, V)对数据集上调用该函数的时候，返回ascending指定的升序或者逆序排列的(K, V)数据集对。\\ \hline
-join(otherDataset, [numTasks]) &	 当在类型为(K, V)和(K, W)的数据集上调用的时候，返回(K, (V, M))的数据集对。此外还有leftOuterJoin/rightOuterJoin/LeftOuterJoin \\ \hline
+join(otherDataset, [numTasks]) &	 当在类型为(K, V)和(K, W)的数据集上调用的时候，返回(K, (V, M))的数据集对。此外还有leftOuterJoin/rightOuterJoin/LeftOuterJoin。 \\ \hline
 cogroup(otherDataset, [numTasks])	& 在数据类型(K, V) 和(K, W)上进行调用的时候, 返回(K, (Iterable<V>, Iterable<W>))数据集对。\\ \hline
 cartesian(otherDataset)	 & 当在数据类型T和U上进行调用时，返回所有的(T, U)对。\\ \hline
 \end{tabular}
@@ -66,7 +66,7 @@ cartesian(otherDataset)	 & 当在数据类型T和U上进行调用时，返回所
     \hline
     reduce(func) & 对数据集中的元素使用func函数(输入两个元素，输出一个元素)进行聚合。func函数需要符合结合律和交换律以防在并行计算中出错。\\     \hline
     collect() & 把数据集中的所有元素作为数组返回到驱动程序中。通常在其他操作返回一个较小的数据集后比较有用。\\ \hline
-    count() &  返回数据集中元素的个数\\ \hline
+    count() &  返回数据集中元素的个数。\\ \hline
     first() &  返回数据集中的第一个元素。\\ \hline
     take(n) & 返回包含数据集中前n个元素的数组。\\ \hline
     takeSample(withReplacement, num, [seed]) & 返回数据集中随机采样后的数组。\\ \hline
@@ -190,7 +190,7 @@ reddit的非个性化推荐系统是较为成功的推荐系统之一，并且�
 每个用户和其他用户之间的相似关系可以通过该用户给消费过的物品评分来计算。我们可以认为每个物品都是一个维度，每个用户都是在高维空间的一个向量，用户对商品的评分是对于用户的度量，通常我们使用余弦角度公式\ref{eqn:cos}来计算相似性。
     \begin{equation}\label{eqn:cos}
        similarity(\vec{A}, \vec{B}) = cosine(\vec{A}, \vec{B}) = \frac{\vec{A} \cdot \vec{B}}{\lVert\vec{A}\rVert\ast\lVert\vec{B}\rVert}
-    \end{equation}。
+    \end{equation}
     我们可以通过计算两个用户共同评分过的的物品的评分组成的向量之间的夹角，通过夹角的大小我们来评估用户之间的相似性。当夹角超过90度的时候，我们认为用户之间存在负相关性。这种负相关性不需要出现在我们的用户的邻居中，需要剔除掉。如果两个用户共同评价的商品只有一个，向量蜕化到标量，相似性计算必然为1，这种情况需要去掉。传统的串行算法如算法\ref{alg:useruserrecseq}。
 
  \begin{algorithm}
